@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
+ * Wrapper class that combines all three streams used by any application
+ *
  * @author antonpp
  * @since 01/11/2016
  */

@@ -2,7 +2,7 @@ package ru.mit.spbau.antonpp.bash;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import ru.mit.spbau.antonpp.bash.cli.CommandParser;
+import ru.mit.spbau.antonpp.bash.cli.CommandLineParser;
 import ru.mit.spbau.antonpp.bash.cli.Environment;
 import ru.mit.spbau.antonpp.bash.exceptions.CommandExecutionException;
 import ru.mit.spbau.antonpp.bash.exceptions.LineArgumentsParseException;
@@ -61,7 +61,7 @@ public class Application {
                     log.debug("Updated env");
                 } else {
                     try {
-                        val infos = new CommandParser(line, env).getCommandInfos();
+                        val infos = CommandLineParser.parse(line, env);
                         CommandExecutor.executePiped(infos, io, env);
                     } catch (LineArgumentsParseException e) {
                         val msg = "Failed to parse input";

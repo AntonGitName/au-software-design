@@ -1,13 +1,16 @@
 package ru.mit.spbau.antonpp.bash.cli;
 
 import lombok.Getter;
-
-import java.util.Arrays;
+import lombok.ToString;
 
 /**
+ * Wrapper class that simplifies passing arguments from {@link CommandLineParser} to
+ * {@link ru.mit.spbau.antonpp.bash.execution.CommandExecutor}.
+ *
  * @author antonpp
  * @since 31/10/2016
  */
+@ToString
 public class CommandInfo {
 
     @Getter
@@ -20,13 +23,5 @@ public class CommandInfo {
     public CommandInfo(String name, String[] args) {
         this.name = name;
         this.args = args;
-    }
-
-    @Override
-    public String toString() {
-        return "CommandInfo{" +
-                "name=" + name +
-                ", args=" + Arrays.toString(args) +
-                '}';
     }
 }

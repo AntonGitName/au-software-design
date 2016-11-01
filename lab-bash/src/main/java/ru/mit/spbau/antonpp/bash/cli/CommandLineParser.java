@@ -1,6 +1,5 @@
 package ru.mit.spbau.antonpp.bash.cli;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import ru.mit.spbau.antonpp.bash.exceptions.LineArgumentsParseException;
@@ -16,29 +15,35 @@ import static ru.mit.spbau.antonpp.bash.cli.Environment.*;
  * @since 31/10/2016
  */
 @Slf4j
-public class CommandParser {
+public class CommandLineParser {
 
     private static final String ARGUMENT_REGEX = String.format("(?:\\s*)((?:%s|%s|%s)+)",
-            NO_SPECIAL, SINGLE_QUOTED_UNCAPTURED, DOUBLE_QOUTED_UNCAPTURED);
-    private static final String COMMAND_REGEX = String.format("(?:\\s*)((?:%s|%s|%s)+)",
-            NO_QUOTES_OR_PIPE, SINGLE_QUOTED_UNCAPTURED, DOUBLE_QOUTED_UNCAPTURED);
+            NO_SPECIAL, SINGLE_QUOTED_UNCAPTURED, DOUBLE_QUOTED_UNCAPTURED);
+    private static final String COMMAND_REGEX = String.format("\\s*((?:%s|%s|%s)+)",
+            NO_QUOTES_OR_PIPE, SINGLE_QUOTED_UNCAPTURED, DOUBLE_QUOTED_UNCAPTURED);
 
     private static final Pattern ARGUMENT_PATTERN = Pattern.compile(ARGUMENT_REGEX);
     private static final Pattern COMMAND_PATTERN = Pattern.compile(COMMAND_REGEX);
 
-    @Getter
-    private final List<CommandInfo> commandInfos = new ArrayList<>();
-
-    public CommandParser(String input, Environment env) throws LineArgumentsParseException {
+    /**
+     * Splits text into commands.
+     *
+     * @param input text to parse
+     * @param env   environment with all available variables
+     * @return list of parsed commands
+     * @throws LineArgumentsParseException if line parsing failed
+     */
+    public static List<CommandInfo> parse(String input, Environment env) throws LineArgumentsParseException {
+        final List<CommandInfo> infos = new ArrayList<>();
         log.debug("Input: `{}`", input);
         val matcher = COMMAND_PATTERN.matcher(input);
         while (matcher.find()) {
             val group = matcher.group(1);
             log.debug("Found command with arguments: `{}`", group);
 
-            val split = splitARguments(group);
+            val split = splitArguments(group);
             if (split.isEmpty()) {
-                throw new LineArgumentsParseException("Failed to parse command" + group);
+                throw new LineArgumentsParseException("Failed to parse command: " + group);
             }
             val cmdArgs = new String[split.size() - 1];
             for (int j = 1; j < split.size(); j++) {
@@ -46,14 +51,15 @@ public class CommandParser {
             }
             val name = env.unquoteAndSubstitute(split.get(0));
             log.debug("Found command: `{}`", name);
-            commandInfos.add(new CommandInfo(name, cmdArgs));
+            infos.add(new CommandInfo(name, cmdArgs));
         }
-        if (commandInfos.isEmpty()) {
+        if (infos.isEmpty()) {
             throw new LineArgumentsParseException("No commands found");
         }
+        return infos;
     }
 
-    private static List<String> splitARguments(String str) {
+    private static List<String> splitArguments(String str) {
         val matcher = ARGUMENT_PATTERN.matcher(str);
         val result = new ArrayList<String>();
         while (matcher.find()) {
