@@ -14,6 +14,8 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 /**
+ * This class is an entry point of the application. It has a looping mechanism that handles user input.
+ *
  * @author antonpp
  * @since 31/10/2016
  */
@@ -33,6 +35,15 @@ public class Application {
         new Application().start();
     }
 
+    /**
+     * This method has code that handles user input. User input can be of two types:
+     * <ul>
+     * <li> variable assignment </li>
+     * <li> command call (possibly chained via pipe) </li>
+     * </ul>
+     * Code of this method has an infinite loop that reads and handles input. The only way to break the loop is to call
+     * `exit`.
+     */
     private void start() {
 
         prepareEnv();
@@ -66,6 +77,12 @@ public class Application {
         }
     }
 
+    /**
+     * This method tests if a string defines a variable assignment. It also updates application environment if the
+     * result is true.
+     * @param str a string to test
+     * @return true if {@code str} is an assignment and false otherwise
+     */
     private boolean tryAddSubstitution(String str) {
         val matcher = ADD_ENV_PATTERN.matcher(str);
         if (matcher.find()) {
@@ -77,12 +94,18 @@ public class Application {
         return false;
     }
 
+    /**
+     * Updates application environment with some basic properties
+     */
     private void prepareEnv() {
         env.setEnv("pwd", System.getProperty("user.dir"));
         env.setEnv("user", System.getProperty("user.name"));
         env.setEnv("home", System.getProperty("user.home"));
     }
 
+    /**
+     * Prints console prompt
+     */
     private void printPS() {
         val user = env.getEnv("user");
         val path = Paths.get(env.getEnv("home")).relativize(Paths.get(env.getEnv("pwd")));
