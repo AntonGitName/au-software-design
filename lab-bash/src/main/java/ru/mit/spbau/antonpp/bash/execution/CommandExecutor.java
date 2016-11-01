@@ -17,6 +17,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
+ * This class provides methods to execute commands.
+ *
+ * @see Executable
  * @author antonpp
  * @since 01/11/2016
  */
@@ -26,6 +29,17 @@ public class CommandExecutor {
     private CommandExecutor() {
     }
 
+    /**
+     * Method to start chained execution of the commands. Organizes piped input/output and prepares environment (e.g.
+     * adds variables $0, $1, ...).
+     *
+     * @param infos Information about commands that must be executed
+     * @param io    input/output/error streams
+     * @param env   environment with all variables that will available during the execution of commands
+     * @return return code of the last executable in the chain
+     * @throws CommandExecutionException in case if executable with specified name was not found and also thrwon if any
+     *                                   exception appears during the execution of the commands.
+     */
     public static int executePiped(List<CommandInfo> infos, IOStreamsWrapper io, Environment env) throws CommandExecutionException {
         if (infos.size() == 1) {
             return execute(infos.get(0), io, env);
@@ -70,8 +84,15 @@ public class CommandExecutor {
         }
     }
 
+    /**
+     * Looks for an {@link Executable} for the command with specified name. It first looks through built-in commands and
+     * then checks if an executable with such path exists.
+     *
+     * @param name a name of built-in function or a path to executable file
+     * @return an instance of {@link Executable} with this name or null if it was not found
+     */
     @Nullable
-    private static Executable getExecutable(String name) throws CommandExecutionException {
+    private static Executable getExecutable(String name) {
         val command = BuiltInCommands.getCommand(name);
         if (command == null) {
             val path = Paths.get(name);

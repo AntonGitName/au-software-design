@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
+ * This class represents all executable files that can be called via command line of the application.
+ *
  * @author antonpp
  * @since 01/11/2016
  */

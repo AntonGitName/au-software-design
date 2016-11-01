@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 import ru.mit.spbau.antonpp.bash.execution.builtin.*;
 
 /**
+ * A list of all built-in commands.
+ *
  * @author antonpp
  * @since 31/10/2016
  */
