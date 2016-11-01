@@ -7,11 +7,10 @@ import ru.mit.spbau.antonpp.bash.cli.Environment;
 import ru.mit.spbau.antonpp.bash.exceptions.CommandExecutionException;
 import ru.mit.spbau.antonpp.bash.exceptions.LineArgumentsParseException;
 import ru.mit.spbau.antonpp.bash.execution.CommandExecutor;
-import ru.mit.spbau.antonpp.bash.io.IOStreamsWrapper;
+import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
 import java.nio.file.Paths;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 /**
  * This class is an entry point of the application. It has a looping mechanism that handles user input.
@@ -22,11 +21,8 @@ import java.util.regex.Pattern;
 @Slf4j
 public class Application {
 
-    private static final String ADD_ENV_REGEX = "^([a-zA-Z]\\w*)=(.*)$";
-    private static final Pattern ADD_ENV_PATTERN = Pattern.compile(ADD_ENV_REGEX);
-
     private final Environment env = new Environment();
-    private final IOStreamsWrapper io = new IOStreamsWrapper(System.in, System.out, System.err);
+    private final IOStreams io = new IOStreams(System.in, System.out, System.err);
 
     private Application() {
     }
@@ -57,7 +53,11 @@ public class Application {
                 val line = scanner.nextLine();
                 log.debug("User typed: {}", line);
 
-                if (tryAddSubstitution(line)) {
+                if (line.isEmpty()) {
+                    continue;
+                }
+
+                if (CommandLineParser.tryAddSubstitution(line, env)) {
                     log.debug("Updated env");
                 } else {
                     try {
@@ -75,23 +75,6 @@ public class Application {
                 }
             }
         }
-    }
-
-    /**
-     * This method tests if a string defines a variable assignment. It also updates application environment if the
-     * result is true.
-     * @param str a string to test
-     * @return true if {@code str} is an assignment and false otherwise
-     */
-    private boolean tryAddSubstitution(String str) {
-        val matcher = ADD_ENV_PATTERN.matcher(str);
-        if (matcher.find()) {
-            val key = matcher.group(1);
-            val value = matcher.group(2);
-            env.setEnv(key, env.unquoteAndSubstitute(value));
-            return true;
-        }
-        return false;
     }
 
     /**

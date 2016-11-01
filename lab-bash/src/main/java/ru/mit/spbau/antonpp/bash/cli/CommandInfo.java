@@ -2,10 +2,13 @@ package ru.mit.spbau.antonpp.bash.cli;
 
 import lombok.Getter;
 import lombok.ToString;
+import ru.mit.spbau.antonpp.bash.execution.CommandExecutor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Wrapper class that simplifies passing arguments from {@link CommandLineParser} to
- * {@link ru.mit.spbau.antonpp.bash.execution.CommandExecutor}.
+ * Wrapper class that simplifies passing arguments from {@link CommandLineParser} to {@link CommandExecutor}.
  *
  * @author antonpp
  * @since 31/10/2016
@@ -17,11 +20,11 @@ public class CommandInfo {
     private final String name;
 
     @Getter
-    private final String[] args;
+    private final List<String> args;
 
 
-    public CommandInfo(String name, String[] args) {
+    public CommandInfo(String name, List<String> args) {
         this.name = name;
-        this.args = args;
+        this.args = new ArrayList<>(args);
     }
 }

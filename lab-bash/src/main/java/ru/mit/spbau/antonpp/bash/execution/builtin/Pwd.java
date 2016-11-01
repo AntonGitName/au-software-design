@@ -2,22 +2,21 @@ package ru.mit.spbau.antonpp.bash.execution.builtin;
 
 import ru.mit.spbau.antonpp.bash.cli.Environment;
 import ru.mit.spbau.antonpp.bash.exceptions.TooManyArgumentsException;
-import ru.mit.spbau.antonpp.bash.execution.Executable;
-import ru.mit.spbau.antonpp.bash.io.IOStreamsWrapper;
+import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
-import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * @author antonpp
  * @since 01/11/2016
  */
-public class Pwd implements Executable {
+public class Pwd extends AbstractBuiltinExecutable {
     @Override
-    public int execute(Environment env, String[] args, IOStreamsWrapper io) throws Exception {
-        if (args.length > 0) {
-            throw new TooManyArgumentsException(args.length, 0);
+    public int execute(Environment env, List<String> args, IOStreams io) throws Exception {
+        if (args.size() > 0) {
+            throw new TooManyArgumentsException(args.size(), 0);
         }
-        io.getOut().write(env.getEnv("pwd").getBytes(Charset.defaultCharset()));
+        writeString(io, env.getEnv("pwd"));
         return 0;
     }
 }

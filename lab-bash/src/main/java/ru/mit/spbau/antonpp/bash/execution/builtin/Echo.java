@@ -1,23 +1,19 @@
 package ru.mit.spbau.antonpp.bash.execution.builtin;
 
-import lombok.val;
 import ru.mit.spbau.antonpp.bash.cli.Environment;
-import ru.mit.spbau.antonpp.bash.execution.Executable;
-import ru.mit.spbau.antonpp.bash.io.IOStreamsWrapper;
+import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
-import java.nio.charset.Charset;
-import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * @author antonpp
  * @since 01/11/2016
  */
-public class Echo implements Executable {
+public class Echo extends AbstractBuiltinExecutable {
     @Override
-    public int execute(Environment env, String[] args, IOStreamsWrapper io) throws Exception {
-        val result = Arrays.stream(args).collect(Collectors.joining(" ")) + "\n";
-        io.getOut().write(result.getBytes(Charset.defaultCharset()));
+    public int execute(Environment env, List<String> args, IOStreams io) throws Exception {
+        writeString(io, args.stream().collect(Collectors.joining(" ")));
         return 0;
     }
 }

@@ -40,7 +40,7 @@ public class Environment {
     /**
      * Creates environment with specified properties.
      *
-     * @param env
+     * @param env map with properties
      */
     private Environment(Map<String, String> env) {
         this.env = new HashMap<>(env);

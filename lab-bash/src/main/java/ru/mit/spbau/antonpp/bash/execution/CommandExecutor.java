@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.mit.spbau.antonpp.bash.cli.CommandInfo;
 import ru.mit.spbau.antonpp.bash.cli.Environment;
 import ru.mit.spbau.antonpp.bash.exceptions.CommandExecutionException;
-import ru.mit.spbau.antonpp.bash.io.IOStreamsWrapper;
+import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
- * This class provides methods to execute commands.
+ * This class provides one public method to execute chained (or single) commands.
  *
  * @see Executable
  * @author antonpp
@@ -37,10 +37,13 @@ public class CommandExecutor {
      * @param io    input/output/error streams
      * @param env   environment with all variables that will available during the execution of commands
      * @return return code of the last executable in the chain
-     * @throws CommandExecutionException in case if executable with specified name was not found and also thrwon if any
-     *                                   exception appears during the execution of the commands.
+     * @throws CommandExecutionException in case if executable with specified name was not found or if any exception
+     * is thrown during the execution of the commands.
+     *
+     * @see CommandExecutor#execute(CommandInfo, IOStreams, Environment)
      */
-    public static int executePiped(List<CommandInfo> infos, IOStreamsWrapper io, Environment env) throws CommandExecutionException {
+    public static int executePiped(List<CommandInfo> infos, IOStreams io, Environment env)
+            throws CommandExecutionException {
         if (infos.size() == 1) {
             return execute(infos.get(0), io, env);
         } else {
@@ -54,7 +57,7 @@ public class CommandExecutor {
                 pipedInOut = isFirst ? io.getIn() : new ByteArrayInputStream(buffer);
                 isLast = i + 1 == infos.size();
                 pipedOutIn = isLast ? io.getOut() : new ByteArrayOutputStream();
-                rc = execute(infos.get(i), new IOStreamsWrapper(pipedInOut, pipedOutIn, io.getErr()), env);
+                rc = execute(infos.get(i), new IOStreams(pipedInOut, pipedOutIn, io.getErr()), env);
                 isFirst = false;
                 if (!isLast) {
                     buffer = ((ByteArrayOutputStream) pipedOutIn).toByteArray();
@@ -64,11 +67,23 @@ public class CommandExecutor {
         }
     }
 
-    private static int execute(CommandInfo commandInfo, IOStreamsWrapper io, Environment env) throws CommandExecutionException {
+    /**
+     * Method to start execution of one command. This method prepares environment (e.g. adds variables $0, $1, ...) and
+     * catches any exception that was thrown by executed code.
+     *
+     * @param commandInfo information about executable that must be executed
+     * @param io          input/output/error streams
+     * @param env         environment with all variables that will available during the execution the command
+     * @return return code of the executable
+     * @throws CommandExecutionException in case if executable with specified name was not found or if any exception
+     *                                   is thrown during the execution.
+     */
+    private static int execute(CommandInfo commandInfo, IOStreams io, Environment env)
+            throws CommandExecutionException {
         val executableEnv = env.copy();
         val args = commandInfo.getArgs();
-        for (int i = 0; i < args.length; i++) {
-            executableEnv.setEnv(Integer.toString(i + 1), args[i]);
+        for (int i = 0; i < args.size(); i++) {
+            executableEnv.setEnv(Integer.toString(i + 1), args.get(i));
         }
         val name = commandInfo.getName();
         executableEnv.setEnv("0", name);
@@ -79,8 +94,9 @@ public class CommandExecutor {
             }
             return executable.execute(executableEnv, args, io);
         } catch (Exception e) {
-            log.warn(String.format("Command %s failed during an execution", name), e);
-            throw new CommandExecutionException(String.format("Command %s failed during an execution", name), e);
+            val msg = String.format("Command `%s` failed during an execution", name);
+            log.warn(msg, e);
+            throw new CommandExecutionException(msg, e);
         }
     }
 
@@ -88,15 +104,15 @@ public class CommandExecutor {
      * Looks for an {@link Executable} for the command with specified name. It first looks through built-in commands and
      * then checks if an executable with such path exists.
      *
-     * @param name a name of built-in function or a path to executable file
-     * @return an instance of {@link Executable} with this name or null if it was not found
+     * @param name a name of built-in function or a path to executable file.
+     * @return an instance of {@link Executable} with this name or null if it was not found.
      */
     @Nullable
     private static Executable getExecutable(String name) {
         val command = BuiltInCommands.getCommand(name);
         if (command == null) {
             val path = Paths.get(name);
-            if (Files.isExecutable(path)) {
+            if (Files.isExecutable(path) && !Files.isDirectory(path)) {
                 return new External(path);
             }
         } else {
