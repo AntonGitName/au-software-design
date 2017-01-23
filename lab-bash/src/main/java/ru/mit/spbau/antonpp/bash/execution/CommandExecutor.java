@@ -48,14 +48,13 @@ public class CommandExecutor {
             return execute(infos.get(0), io, env);
         } else {
             boolean isFirst = true;
-            boolean isLast;
             byte[] buffer = null;
             int rc = 0;
             InputStream pipedInOut;
             OutputStream pipedOutIn;
             for (int i = 0; i < infos.size(); i++) {
                 pipedInOut = isFirst ? io.getIn() : new ByteArrayInputStream(buffer);
-                isLast = i + 1 == infos.size();
+                final boolean isLast = i + 1 == infos.size();
                 pipedOutIn = isLast ? io.getOut() : new ByteArrayOutputStream();
                 rc = execute(infos.get(i), new IOStreams(pipedInOut, pipedOutIn, io.getErr()), env);
                 isFirst = false;
