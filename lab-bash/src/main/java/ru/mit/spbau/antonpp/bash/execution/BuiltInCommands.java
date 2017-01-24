@@ -11,7 +11,7 @@ import ru.mit.spbau.antonpp.bash.execution.builtin.*;
  * @since 31/10/2016
  */
 public enum BuiltInCommands {
-    CAT(new Cat()), PWD(new Pwd()), WC(new WordCount()), ECHO(new Echo()), EXIT(new Exit());
+    CAT(new Cat()), PWD(new Pwd()), WC(new WordCount()), ECHO(new Echo()), EXIT(new Exit()), GREP(new Grep());
 
     @Getter
     private final Executable executable;
