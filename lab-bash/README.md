@@ -47,6 +47,6 @@ The whole project consists of four logical parts:
  
    These classes represents different executables that our hand-made bash can execute. They receive control from the `CommandExecutor` when user calls them from command line. As it was pointed out in the begging of this readme file, these executables can be of two different types:
    
-   * built-in (all of them located in package `execution.builtin` and must be declared in `BuiltInCommands`)
+   * built-in (all of them are located in package `execution.builtin` and must be declared in `BuiltInCommands`)
    * external (this type represented by sing class `External`)
    
