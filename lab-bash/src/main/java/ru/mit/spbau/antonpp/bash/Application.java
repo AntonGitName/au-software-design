@@ -5,6 +5,7 @@ import lombok.val;
 import ru.mit.spbau.antonpp.bash.cli.CommandLineParser;
 import ru.mit.spbau.antonpp.bash.cli.Environment;
 import ru.mit.spbau.antonpp.bash.exceptions.CommandExecutionException;
+import ru.mit.spbau.antonpp.bash.exceptions.CommandInvalidArgumentsException;
 import ru.mit.spbau.antonpp.bash.exceptions.LineArgumentsParseException;
 import ru.mit.spbau.antonpp.bash.execution.CommandExecutor;
 import ru.mit.spbau.antonpp.bash.io.IOStreams;
@@ -71,6 +72,10 @@ public class Application {
                         val msg = e.getMessage();
                         System.err.println(msg);
                         log.warn("Piped commands failed", e);
+                    } catch (CommandInvalidArgumentsException e) {
+                        System.err.println(e.getMessage());
+                    } finally {
+                        System.err.flush();
                     }
                 }
             }

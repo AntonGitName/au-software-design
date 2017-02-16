@@ -1,8 +1,8 @@
 package ru.mit.spbau.antonpp.bash.execution.builtin;
 
 import com.google.common.collect.Range;
-import com.google.common.io.ByteStreams;
 import ru.mit.spbau.antonpp.bash.cli.Environment;
+import ru.mit.spbau.antonpp.bash.exceptions.CommandInvalidArgumentsException;
 import ru.mit.spbau.antonpp.bash.io.IOStreams;
 import se.softhouse.jargo.Argument;
 import se.softhouse.jargo.ArgumentException;
@@ -18,6 +18,10 @@ import java.util.regex.Pattern;
 import static se.softhouse.jargo.Arguments.*;
 
 /**
+ * This class partially implements bash-like grep regex search tool.
+ * <p>
+ * Usage: grep [-h] [-i] [-A] [-w] [-e] PATTERN [FILE]
+ *
  * @author Anton Mordberg
  * @since 23.01.17
  */
@@ -49,13 +53,18 @@ public class Grep extends AbstractBuiltinExecutable {
     private static final Argument<String> PATTERN_ARGUMENT = stringArgument()
             .description("A regular expression that is searched.").required().build();
 
+    private static final Argument<String> FILE_ARGUMENT = stringArgument()
+            .description("Filename with text to search in. Standard input is used if not specified.")
+            .defaultValue("").build();
+
     @Override
     public int execute(Environment env, List<String> args, IOStreams io) throws Exception {
         final ParsedArguments arguments;
         try {
             arguments = CommandLineParser
-                    .withArguments(CASE_INSENSITIVE_ARGUMENT, LINES_AFTER_ARGUMENT, WORDS_ONLY_ARGUMENT, USE_REGEX_ARGUMENT)
-                    .andArguments(PATTERN_ARGUMENT, HELP_ARGUMENT)
+                    .withArguments(CASE_INSENSITIVE_ARGUMENT, LINES_AFTER_ARGUMENT, WORDS_ONLY_ARGUMENT,
+                            USE_REGEX_ARGUMENT)
+                    .andArguments(PATTERN_ARGUMENT, FILE_ARGUMENT, HELP_ARGUMENT)
                     .programName(EXECUTABLE_NAME)
                     .parse(args);
         } catch (ArgumentException e) {
@@ -87,13 +96,22 @@ public class Grep extends AbstractBuiltinExecutable {
 
         state.pattern = Pattern.compile(query);
 
-        grep(state, io.getIn(), io.getOut());
+        final String fname = arguments.get(FILE_ARGUMENT);
+        if (fname == null || fname.isEmpty()) {
+            grep(state, io.getIn(), io.getOut());
+        } else {
+            try (InputStream fin = new FileInputStream(fname)) {
+                grep(state, fin, io.getOut());
+            } catch (FileNotFoundException e) {
+                throw new CommandInvalidArgumentsException(String.format("No such file `%s`", fname));
+            }
+        }
 
         return 0;
     }
 
     private void grep(GrepState state, InputStream in, OutputStream out) throws IOException {
-        try(Scanner scanner = new Scanner(in)) {
+        try (Scanner scanner = new Scanner(in)) {
             state.linesToPrint = 0;
             while (scanner.hasNext()) {
                 String highlightedString = highlightMatch(state, scanner.nextLine());
