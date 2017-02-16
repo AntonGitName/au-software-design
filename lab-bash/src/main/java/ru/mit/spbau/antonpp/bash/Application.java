@@ -98,5 +98,6 @@ public class Application {
         val user = env.getEnv("user");
         val path = Paths.get(env.getEnv("home")).relativize(Paths.get(env.getEnv("pwd")));
         System.out.printf("%s@~/%s$ ", user, path);
+        System.out.flush();
     }
 }

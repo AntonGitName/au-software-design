@@ -2,7 +2,7 @@ package ru.mit.spbau.antonpp.bash.execution.builtin;
 
 import com.google.common.collect.Range;
 import ru.mit.spbau.antonpp.bash.cli.Environment;
-import ru.mit.spbau.antonpp.bash.exceptions.CommandInvalidArgumentsException;
+import ru.mit.spbau.antonpp.bash.exceptions.SpecifiedFileNotFoundException;
 import ru.mit.spbau.antonpp.bash.io.IOStreams;
 import se.softhouse.jargo.Argument;
 import se.softhouse.jargo.ArgumentException;
@@ -103,7 +103,7 @@ public class Grep extends AbstractBuiltinExecutable {
             try (InputStream fin = new FileInputStream(fname)) {
                 grep(state, fin, io.getOut());
             } catch (FileNotFoundException e) {
-                throw new CommandInvalidArgumentsException(String.format("No such file `%s`", fname));
+                throw new SpecifiedFileNotFoundException(fname);
             }
         }
 
