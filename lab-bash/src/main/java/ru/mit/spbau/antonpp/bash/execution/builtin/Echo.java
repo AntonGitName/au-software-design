@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * This echo -_-
+ *
+ * Usage: echo [STRING]...
+ *
  * @author antonpp
  * @since 01/11/2016
  */

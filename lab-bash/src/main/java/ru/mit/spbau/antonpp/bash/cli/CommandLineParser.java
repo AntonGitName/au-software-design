@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import static ru.mit.spbau.antonpp.bash.cli.Environment.*;
 
 /**
+ * Class that parses command line using regexps.
+ *
  * @author antonpp
  * @since 31/10/2016
  */

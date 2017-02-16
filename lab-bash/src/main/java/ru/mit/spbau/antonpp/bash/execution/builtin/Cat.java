@@ -2,16 +2,18 @@ package ru.mit.spbau.antonpp.bash.execution.builtin;
 
 import com.google.common.io.ByteStreams;
 import ru.mit.spbau.antonpp.bash.cli.Environment;
+import ru.mit.spbau.antonpp.bash.exceptions.SpecifiedFileNotFoundException;
 import ru.mit.spbau.antonpp.bash.exceptions.TooManyArgumentsException;
 import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.List;
 
 /**
+ * Cat is cat. cat prints from file or stdin to stdout.
+ *
+ * Usage: cat [file]
+ *
  * @author antonpp
  * @since 01/11/2016
  */
@@ -24,6 +26,8 @@ public class Cat extends AbstractBuiltinExecutable {
         if (args.size() == 1) {
             try (InputStream in = new FileInputStream(args.get(0))) {
                 cat(in, io.getOut());
+            } catch (FileNotFoundException e) {
+                throw new SpecifiedFileNotFoundException(args.get(0));
             }
         } else {
             cat(io.getIn(), io.getOut());

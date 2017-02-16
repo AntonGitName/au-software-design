@@ -7,6 +7,10 @@ import ru.mit.spbau.antonpp.bash.io.IOStreams;
 import java.util.List;
 
 /**
+ * This tool allows user to print current $PWD
+ *
+ * Usage: pwd
+ *
  * @author antonpp
  * @since 01/11/2016
  */

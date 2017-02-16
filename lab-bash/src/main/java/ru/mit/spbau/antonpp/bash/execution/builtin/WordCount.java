@@ -3,6 +3,7 @@ package ru.mit.spbau.antonpp.bash.execution.builtin;
 import com.google.common.io.ByteStreams;
 import lombok.val;
 import ru.mit.spbau.antonpp.bash.cli.Environment;
+import ru.mit.spbau.antonpp.bash.exceptions.SpecifiedFileNotFoundException;
 import ru.mit.spbau.antonpp.bash.exceptions.TooManyArgumentsException;
 import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
@@ -11,6 +12,11 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 /**
+ * Simplified version of bash `wc` tool.
+ *
+ * Usage: wc [FILE]
+ *
+ *
  * @author antonpp
  * @since 01/11/2016
  */
@@ -23,6 +29,8 @@ public class WordCount extends AbstractBuiltinExecutable {
         if (args.size() == 1) {
             try (InputStream in = new FileInputStream(args.get(0))) {
                 wc(in, io.getOut());
+            } catch (FileNotFoundException e) {
+                throw new SpecifiedFileNotFoundException(args.get(0));
             }
         } else {
             wc(io.getIn(), io.getOut());

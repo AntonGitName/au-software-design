@@ -8,7 +8,10 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 /**
+ * This class extends {@link Executable} interface with commonly used util methods.
+ *
  * @author antonpp
+ * @see Executable
  * @since 01/11/2016
  */
 public abstract class AbstractBuiltinExecutable implements Executable {

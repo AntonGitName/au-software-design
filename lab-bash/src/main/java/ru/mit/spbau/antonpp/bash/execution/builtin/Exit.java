@@ -7,6 +7,10 @@ import ru.mit.spbau.antonpp.bash.io.IOStreams;
 import java.util.List;
 
 /**
+ * This exit. Use it to exit with 0 rc.
+ *
+ * Usage: exit
+ *
  * @author antonpp
  * @since 01/11/2016
  */
