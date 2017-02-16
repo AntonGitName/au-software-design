@@ -8,6 +8,7 @@ import ru.mit.spbau.antonpp.bash.cli.Environment;
 import ru.mit.spbau.antonpp.bash.exceptions.CommandExecutionException;
 import ru.mit.spbau.antonpp.bash.exceptions.CommandInvalidArgumentsException;
 import ru.mit.spbau.antonpp.bash.execution.builtin.BuiltInCommandFactory;
+import ru.mit.spbau.antonpp.bash.execution.external.ExternalExecutorAdapter;
 import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
 import java.io.ByteArrayInputStream;
@@ -84,7 +85,7 @@ public enum ExecutorStrategy {
         if (command == null) {
             val path = Paths.get(name);
             if (Files.isExecutable(path) && !Files.isDirectory(path)) {
-                return new External(path);
+                return new ExternalExecutorAdapter(path);
             }
         }
         return command;
@@ -114,7 +115,7 @@ public enum ExecutorStrategy {
         try {
             val executable = getExecutable(name);
             if (executable == null) {
-                throw new CommandExecutionException(String.format("Command `%s` not found", name));
+                throw new CommandInvalidArgumentsException(String.format("Command `%s` not found", name));
             }
             return executable.execute(executableEnv, args, io);
         } catch (CommandInvalidArgumentsException e) {
