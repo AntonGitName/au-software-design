@@ -1,7 +1,6 @@
 package ru.mit.spbau.antonpp.bash.execution.builtin;
 
 import ru.mit.spbau.antonpp.bash.cli.Environment;
-import ru.mit.spbau.antonpp.bash.exceptions.TooManyArgumentsException;
 import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
 import java.util.List;
@@ -15,11 +14,12 @@ import java.util.List;
  * @since 01/11/2016
  */
 public class Exit extends AbstractBuiltinExecutable {
+    public Exit() {
+        super(0);
+    }
+
     @Override
-    public int execute(Environment env, List<String> args, IOStreams io) throws Exception {
-        if (args.size() > 0) {
-            throw new TooManyArgumentsException(args.size(), 0);
-        }
+    public int executeInternal(Environment env, List<String> args, IOStreams io) throws Exception {
         writeString(io, env.getEnv("Bye!"));
         System.exit(0);
         return 0;

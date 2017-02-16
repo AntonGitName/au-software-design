@@ -60,8 +60,12 @@ public class Grep extends AbstractBuiltinExecutable {
             .description("Filename with text to search in. Standard input is used if not specified.")
             .defaultValue("").build();
 
+    public Grep() {
+        super(Integer.MAX_VALUE);
+    }
+
     @Override
-    public int execute(Environment env, List<String> args, IOStreams io) throws Exception {
+    public int executeInternal(Environment env, List<String> args, IOStreams io) throws Exception {
         final ParsedArguments arguments;
         try {
             arguments = CommandLineParser

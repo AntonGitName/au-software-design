@@ -15,8 +15,12 @@ import java.util.stream.Collectors;
  * @since 01/11/2016
  */
 public class Echo extends AbstractBuiltinExecutable {
+    public Echo() {
+        super(Integer.MAX_VALUE);
+    }
+
     @Override
-    public int execute(Environment env, List<String> args, IOStreams io) throws Exception {
+    public int executeInternal(Environment env, List<String> args, IOStreams io) throws Exception {
         writeString(io, args.stream().collect(Collectors.joining(" ")));
         return 0;
     }
