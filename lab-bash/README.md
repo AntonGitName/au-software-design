@@ -23,7 +23,7 @@ You can also pipe commands and run external executable files (for external files
 
 #### Documentation
 
-You can find class diagram under `/doc` folder. It contains compiled pdf file and a source xml that can be opened with [draw.io](draw.io).
+You can find class diagram under `/doc` folder. It contains compiled pdf file and a source xml that can be opened with [draw.io](https://www.draw.io/).
  
 The whole project consists of four logical parts:
 1. `Application` class
