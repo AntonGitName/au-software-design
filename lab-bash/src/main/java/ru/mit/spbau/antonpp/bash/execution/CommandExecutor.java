@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.mit.spbau.antonpp.bash.cli.CommandInfo;
 import ru.mit.spbau.antonpp.bash.cli.Environment;
 import ru.mit.spbau.antonpp.bash.exceptions.CommandExecutionException;
+import ru.mit.spbau.antonpp.bash.exceptions.CommandInvalidArgumentsException;
 import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
 import java.io.ByteArrayInputStream;
@@ -39,11 +40,12 @@ public class CommandExecutor {
      * @return return code of the last executable in the chain
      * @throws CommandExecutionException in case if executable with specified name was not found or if any exception
      * is thrown during the execution of the commands.
+     * @throws CommandInvalidArgumentsException in case user passed (real user, not coder) invalid arguments
      *
      * @see CommandExecutor#execute(CommandInfo, IOStreams, Environment)
      */
     public static int executePiped(List<CommandInfo> infos, IOStreams io, Environment env)
-            throws CommandExecutionException {
+            throws CommandExecutionException, CommandInvalidArgumentsException {
         if (infos.size() == 1) {
             return execute(infos.get(0), io, env);
         } else {
@@ -76,9 +78,10 @@ public class CommandExecutor {
      * @return return code of the executable
      * @throws CommandExecutionException in case if executable with specified name was not found or if any exception
      *                                   is thrown during the execution.
+     * @throws CommandInvalidArgumentsException in case user passed (real user, not coder) invalid arguments
      */
     private static int execute(CommandInfo commandInfo, IOStreams io, Environment env)
-            throws CommandExecutionException {
+            throws CommandExecutionException, CommandInvalidArgumentsException {
         val executableEnv = env.copy();
         val args = commandInfo.getArgs();
         for (int i = 0; i < args.size(); i++) {
@@ -92,6 +95,8 @@ public class CommandExecutor {
                 throw new CommandExecutionException(String.format("Command `%s` not found", name));
             }
             return executable.execute(executableEnv, args, io);
+        } catch (CommandInvalidArgumentsException e) {
+            throw e;
         } catch (Exception e) {
             val msg = String.format("Command `%s` failed during an execution", name);
             log.warn(msg, e);
