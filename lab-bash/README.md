@@ -24,6 +24,7 @@ You can also pipe commands and run external executable files (for external files
 1. Run ```java -jar lab-bash/build/libs/lab-bash-1.0.jar```
 
 #### Tracker
+
 You can track this project at [Pivotal Tracker](https://www.pivotaltracker.com/projects/1959073).
 
 #### Documentation
