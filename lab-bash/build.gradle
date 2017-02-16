@@ -1,0 +1,23 @@
+//create a single Jar with all dependencies
+jar {
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    manifest {
+        attributes 'Main-Class': 'ru.mit.spbau.antonpp.bash.Application'
+    }
+}
+
+dependencies {
+    // lombok annotations
+    compileOnly "org.projectlombok:lombok:1.16.10"
+
+    // cli - argument parser
+    compile group: 'se.softhouse', name: 'jargo', version: '0.1.1'
+
+    // matchers for tests
+    testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: '1.3'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '1.3'
+}

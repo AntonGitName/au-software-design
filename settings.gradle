@@ -1,1 +1,3 @@
 rootProject.name = 'au-software-design'
+
+include ':lab-bash'
