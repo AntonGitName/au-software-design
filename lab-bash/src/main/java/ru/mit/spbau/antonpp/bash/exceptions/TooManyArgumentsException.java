@@ -7,6 +7,6 @@ package ru.mit.spbau.antonpp.bash.exceptions;
 public class TooManyArgumentsException extends CommandInvalidArgumentsException {
 
     public TooManyArgumentsException(int provided, int expected) {
-        super(String.format("Expected at most %s, but received %s", expected, provided));
+        super(String.format("Expected at most %s argument, but received %s", expected, provided));
     }
 }
