@@ -8,6 +8,7 @@ import ru.mit.spbau.antonpp.bash.exceptions.CommandExecutionException;
 import ru.mit.spbau.antonpp.bash.exceptions.CommandInvalidArgumentsException;
 import ru.mit.spbau.antonpp.bash.exceptions.LineArgumentsParseException;
 import ru.mit.spbau.antonpp.bash.execution.CommandExecutor;
+import ru.mit.spbau.antonpp.bash.execution.ExecutorStrategy;
 import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
 import java.nio.file.Paths;
@@ -22,6 +23,7 @@ import java.util.Scanner;
 @Slf4j
 public class Application {
 
+    private final CommandExecutor commandExecutor = new CommandExecutor();
     private final Environment env = new Environment();
     private final IOStreams io = new IOStreams(System.in, System.out, System.err);
 
@@ -63,7 +65,8 @@ public class Application {
                 } else {
                     try {
                         val infos = CommandLineParser.parse(line, env);
-                        CommandExecutor.executePiped(infos, io, env);
+                        commandExecutor.setStrategy(infos.size() == 1 ? ExecutorStrategy.SEQUENTIAL : ExecutorStrategy.PIPED);
+                        commandExecutor.invoke(infos, io, env);
                     } catch (LineArgumentsParseException e) {
                         val msg = "Failed to parse input";
                         System.err.println(msg);

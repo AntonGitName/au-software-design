@@ -1,6 +1,7 @@
 package ru.mit.spbau.antonpp.bash.execution.builtin;
 
 import com.google.common.collect.Range;
+import lombok.Builder;
 import ru.mit.spbau.antonpp.bash.cli.Environment;
 import ru.mit.spbau.antonpp.bash.exceptions.SpecifiedFileNotFoundException;
 import ru.mit.spbau.antonpp.bash.io.IOStreams;
@@ -21,6 +22,8 @@ import static se.softhouse.jargo.Arguments.*;
  * This class partially implements bash-like grep regex search tool.
  * <p>
  * Usage: grep [-h] [-i] [-A] [-w] [-e] PATTERN [FILE]
+ *
+ * Used patterns: Context, Builder
  *
  * @author Anton Mordberg
  * @since 23.01.17
@@ -73,10 +76,10 @@ public class Grep extends AbstractBuiltinExecutable {
             throw e;
         }
 
-        final GrepState state = new GrepState();
+        final GrepContext.GrepContextBuilder builder = GrepContext.builder();
 
         final Integer tmp = arguments.get(LINES_AFTER_ARGUMENT);
-        state.maxLinesToPrint = tmp != null ? tmp : 1;
+        builder.maxLinesToPrint(tmp != null ? tmp : 1);
         String query = "" + arguments.get(PATTERN_ARGUMENT);
 
         final Boolean useRegex = arguments.get(USE_REGEX_ARGUMENT);
@@ -94,14 +97,15 @@ public class Grep extends AbstractBuiltinExecutable {
             query = "(?i)" + query;
         }
 
-        state.pattern = Pattern.compile(query);
+        builder.pattern(Pattern.compile(query));
+        final GrepContext context = builder.build();
 
         final String fname = arguments.get(FILE_ARGUMENT);
         if (fname == null || fname.isEmpty()) {
-            grep(state, io.getIn(), io.getOut());
+            grep(context, io.getIn(), io.getOut());
         } else {
             try (InputStream fin = new FileInputStream(fname)) {
-                grep(state, fin, io.getOut());
+                grep(context, fin, io.getOut());
             } catch (FileNotFoundException e) {
                 throw new SpecifiedFileNotFoundException(fname);
             }
@@ -110,7 +114,7 @@ public class Grep extends AbstractBuiltinExecutable {
         return 0;
     }
 
-    private void grep(GrepState state, InputStream in, OutputStream out) throws IOException {
+    private void grep(GrepContext state, InputStream in, OutputStream out) throws IOException {
         try (Scanner scanner = new Scanner(in)) {
             state.linesToPrint = 0;
             while (scanner.hasNext()) {
@@ -123,12 +127,12 @@ public class Grep extends AbstractBuiltinExecutable {
         }
     }
 
-    private String highlightMatch(GrepState state, String line) {
-        final Matcher matcher = state.pattern.matcher(line);
+    private String highlightMatch(GrepContext context, String line) {
+        final Matcher matcher = context.pattern.matcher(line);
         String result = "";
         int start = 0;
         while (matcher.find()) {
-            state.linesToPrint = state.maxLinesToPrint + 1;
+            context.linesToPrint = context.maxLinesToPrint + 1;
             result += line.substring(start, matcher.start());
             result += RED_COLOR + matcher.group() + RESET_COLOR;
             start = matcher.end();
@@ -136,10 +140,11 @@ public class Grep extends AbstractBuiltinExecutable {
         return result + line.substring(start) + "\n";
     }
 
-    private static final class GrepState {
+    @Builder
+    private static final class GrepContext {
+        private final Pattern pattern;
         private int linesToPrint;
         private int maxLinesToPrint;
-        private Pattern pattern;
     }
 
 
