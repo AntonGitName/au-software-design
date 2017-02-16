@@ -7,6 +7,7 @@ import ru.mit.spbau.antonpp.bash.cli.CommandInfo;
 import ru.mit.spbau.antonpp.bash.cli.Environment;
 import ru.mit.spbau.antonpp.bash.exceptions.CommandExecutionException;
 import ru.mit.spbau.antonpp.bash.exceptions.CommandInvalidArgumentsException;
+import ru.mit.spbau.antonpp.bash.execution.builtin.BuiltInCommandFactory;
 import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
 import java.io.ByteArrayInputStream;
@@ -18,6 +19,8 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
+ * This enum holds realizations of all possible execution strategies.
+ *
  * @author Anton Mordberg
  * @since 16.02.17
  */
@@ -77,16 +80,14 @@ public enum ExecutorStrategy {
      */
     @Nullable
     private static Executable getExecutable(String name) {
-        val command = BuiltInCommands.getCommand(name);
+        val command = BuiltInCommandFactory.get(name);
         if (command == null) {
             val path = Paths.get(name);
             if (Files.isExecutable(path) && !Files.isDirectory(path)) {
                 return new External(path);
             }
-        } else {
-            return command.getExecutable();
         }
-        return null;
+        return command;
     }
 
     /**
