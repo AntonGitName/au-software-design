@@ -34,7 +34,7 @@ public class MessageSender implements Closeable {
     }
 
 
-    private boolean checkConnection() {
+    boolean checkConnection() {
         try (Socket ignored = provider.newSocket()) {
             return true;
         } catch (IOException e) {
