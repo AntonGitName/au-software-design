@@ -9,6 +9,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * This class is responsible for sending messages and checking connection status.
+ *
  * @author Anton Mordberg
  * @since 17.02.17
  */

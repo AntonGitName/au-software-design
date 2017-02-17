@@ -5,6 +5,8 @@ import ru.mit.spbau.antonpp.messanger.ui.MainFrame;
 import javax.swing.*;
 
 /**
+ * Application entry point.
+ *
  * @author Anton Mordberg
  * @since 17.02.17
  */

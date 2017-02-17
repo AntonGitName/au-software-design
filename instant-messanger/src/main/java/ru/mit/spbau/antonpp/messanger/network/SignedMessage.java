@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 
 /**
+ * Simple Message that has only two fields.
+ *
  * @author Anton Mordberg
  * @since 17.02.17
  */

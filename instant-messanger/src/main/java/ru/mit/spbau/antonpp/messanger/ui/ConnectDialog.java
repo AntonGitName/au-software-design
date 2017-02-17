@@ -7,6 +7,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * This class represents a dialog that is shown when user wants to create a new connection.
+ */
 @Slf4j
 public class ConnectDialog extends JDialog {
 
@@ -65,6 +68,9 @@ public class ConnectDialog extends JDialog {
     }
 
 
+    /**
+     * This callback is called only when the corresponding dialog has enough information to start a connection/
+     */
     public interface ConnectCallback {
         void onTryConnect(int listenPort, int sendPort, String hostname, String name);
     }

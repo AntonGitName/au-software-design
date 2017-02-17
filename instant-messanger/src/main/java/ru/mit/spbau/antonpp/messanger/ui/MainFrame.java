@@ -11,11 +11,14 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 /**
+ * This class implements all business logic and defines all ui elements of the app.
+ *
  * @author Anton Mordberg
  * @since 17.02.17
  */
 @Slf4j
-public class MainFrame extends JFrame implements ConnectDialog.ConnectCallback, MessageReceiver.ReceiverCallback, MessageSender.SenderStatusCallback {
+public class MainFrame extends JFrame
+        implements ConnectDialog.ConnectCallback, MessageReceiver.ReceiverCallback, MessageSender.SenderStatusCallback {
 
     private JPanel panel1;
     private JTextArea dialogArea;

@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * Class that is responsible for receiving messages.
+ *
  * @author Anton Mordberg
  * @since 17.02.17
  */
