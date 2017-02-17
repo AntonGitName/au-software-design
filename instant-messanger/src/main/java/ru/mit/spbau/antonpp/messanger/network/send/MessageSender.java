@@ -1,4 +1,6 @@
-package ru.mit.spbau.antonpp.messanger.network;
+package ru.mit.spbau.antonpp.messanger.network.send;
+
+import ru.mit.spbau.antonpp.messanger.network.data.SignedMessage;
 
 import java.io.Closeable;
 import java.io.DataOutputStream;
@@ -17,13 +19,11 @@ import java.util.concurrent.TimeUnit;
 public class MessageSender implements Closeable {
 
     private final ScheduledExecutorService statusService = Executors.newSingleThreadScheduledExecutor();
+    private final ClientConnectionProvider provider;
 
-    private final String host;
-    private final int port;
 
-    public MessageSender(SenderStatusCallback callback, String host, int port) {
-        this.host = host;
-        this.port = port;
+    public MessageSender(SenderStatusCallback callback, ClientConnectionProvider provider) {
+        this.provider = provider;
         statusService.scheduleAtFixedRate(() -> {
             if (checkConnection()) {
                 callback.onConnected();
@@ -35,7 +35,7 @@ public class MessageSender implements Closeable {
 
 
     private boolean checkConnection() {
-        try (Socket ignored = new Socket(host, port)) {
+        try (Socket ignored = provider.newSocket()) {
             return true;
         } catch (IOException e) {
             return false;
@@ -43,7 +43,7 @@ public class MessageSender implements Closeable {
     }
 
     public void send(SignedMessage msg) throws IOException {
-        try (Socket socket = new Socket(host, port);
+        try (Socket socket = provider.newSocket();
              DataOutputStream dos = new DataOutputStream(socket.getOutputStream())) {
             dos.writeUTF(msg.getSender());
             dos.writeUTF(msg.getText());

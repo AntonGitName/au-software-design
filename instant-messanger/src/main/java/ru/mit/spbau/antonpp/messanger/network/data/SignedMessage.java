@@ -1,4 +1,4 @@
-package ru.mit.spbau.antonpp.messanger.network;
+package ru.mit.spbau.antonpp.messanger.network.data;
 
 import lombok.Builder;
 import lombok.Data;

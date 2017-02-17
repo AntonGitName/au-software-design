@@ -1,11 +1,11 @@
-package ru.mit.spbau.antonpp.messanger.network;
+package ru.mit.spbau.antonpp.messanger.network.receive;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.mit.spbau.antonpp.messanger.network.data.SignedMessage;
 
 import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,21 +19,18 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class MessageReceiver implements Closeable {
 
-//    private static final int TIMEOUT = 30000;
-
     private final ExecutorService listeningService = Executors.newSingleThreadExecutor();
     private final ReceiverCallback callback;
-    private final ServerSocket socket;
+    private final ServerConnectionProvider provider;
 
-    public MessageReceiver(ReceiverCallback callback, int port) throws IOException {
+    public MessageReceiver(ReceiverCallback callback, ServerConnectionProvider provider) throws IOException {
         this.callback = callback;
-        socket = new ServerSocket(port);
-//        socket.setSoTimeout(TIMEOUT);
+        this.provider = provider;
 
         listeningService.execute(() -> {
             while (true) {
                 try {
-                    onConnection(socket.accept());
+                    onConnection(provider.accept());
                 } catch (IOException e) {
                     log.warn("Failed to accept new connection", e);
                     break;
@@ -45,7 +42,7 @@ public class MessageReceiver implements Closeable {
     @Override
     public void close() throws IOException {
         listeningService.shutdownNow();
-        socket.close();
+        provider.close();
     }
 
     private void onConnection(Socket clientSocket) {

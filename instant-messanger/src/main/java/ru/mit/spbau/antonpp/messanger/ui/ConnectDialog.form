@@ -116,7 +116,7 @@
               </grid>
             </constraints>
             <properties>
-              <text value="12346"/>
+              <text value="12345"/>
             </properties>
           </component>
           <component id="b4995" class="javax.swing.JTextField" binding="nameTF" default-binding="true">

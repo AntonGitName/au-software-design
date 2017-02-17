@@ -2,9 +2,11 @@ package ru.mit.spbau.antonpp.messanger.ui;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
-import ru.mit.spbau.antonpp.messanger.network.MessageReceiver;
-import ru.mit.spbau.antonpp.messanger.network.MessageSender;
-import ru.mit.spbau.antonpp.messanger.network.SignedMessage;
+import ru.mit.spbau.antonpp.messanger.network.data.SignedMessage;
+import ru.mit.spbau.antonpp.messanger.network.receive.MessageReceiver;
+import ru.mit.spbau.antonpp.messanger.network.receive.impl.ServerConnectionProviderImpl;
+import ru.mit.spbau.antonpp.messanger.network.send.MessageSender;
+import ru.mit.spbau.antonpp.messanger.network.send.impl.ClientConnectionProviderImpl;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -40,7 +42,7 @@ public class MainFrame extends JFrame
     private String name;
 
     public MainFrame() {
-        super("Chat 0.1");
+        super("Mors™ Chat [closed beta]");
 
         setBounds(100, 100, 640, 480);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -110,10 +112,10 @@ public class MainFrame extends JFrame
 
     @Override
     public void onTryConnect(int listenPort, int sendPort, String hostname, String name) {
-        sender = new MessageSender(this, hostname, sendPort);
+        sender = new MessageSender(this, new ClientConnectionProviderImpl(hostname, sendPort));
         this.name = name;
         try {
-            receiver = new MessageReceiver(this, listenPort);
+            receiver = new MessageReceiver(this, new ServerConnectionProviderImpl(listenPort));
             dialogArea.setText("");
             isConnected = true;
             messagePane.requestFocus();
