@@ -4,7 +4,6 @@ import com.google.common.io.ByteStreams;
 import lombok.val;
 import ru.mit.spbau.antonpp.bash.cli.Environment;
 import ru.mit.spbau.antonpp.bash.exceptions.SpecifiedFileNotFoundException;
-import ru.mit.spbau.antonpp.bash.exceptions.TooManyArgumentsException;
 import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
 import java.io.*;
@@ -21,11 +20,12 @@ import java.util.List;
  * @since 01/11/2016
  */
 public class WordCount extends AbstractBuiltinExecutable {
+    public WordCount() {
+        super(1);
+    }
+
     @Override
-    public int execute(Environment env, List<String> args, IOStreams io) throws Exception {
-        if (args.size() > 1) {
-            throw new TooManyArgumentsException(args.size(), 1);
-        }
+    public int executeInternal(Environment env, List<String> args, IOStreams io) throws Exception {
         if (args.size() == 1) {
             try (InputStream in = new FileInputStream(args.get(0))) {
                 wc(in, io.getOut());

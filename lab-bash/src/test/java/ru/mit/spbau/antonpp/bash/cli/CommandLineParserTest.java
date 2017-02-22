@@ -68,7 +68,8 @@ public class CommandLineParserTest {
     public void parse() throws Exception {
         for (int i = 0; i < ARGS.length; i++) {
             String text = String.format("%s %s", COMMAND, ARGS[i]);
-            CommandInfo info = new CommandInfo(COMMAND, Collections.singletonList(ARGS_UNQUOTED[i]));
+            CommandInfo info = CommandInfo.builder()
+                    .name(COMMAND).args(Collections.singletonList(ARGS_UNQUOTED[i])).build();
             List<CommandInfo> expected = Collections.singletonList(info);
             List<CommandInfo> actual = CommandLineParser.parse(text, env);
             for (int j = 0; j < expected.size(); j++) {
@@ -80,7 +81,8 @@ public class CommandLineParserTest {
 
         for (int i = 0; i < ARGS.length; i++) {
             String text = String.format("   %s      %s      ", COMMAND, ARGS[i]);
-            CommandInfo info = new CommandInfo(COMMAND, Collections.singletonList(ARGS_UNQUOTED[i]));
+            CommandInfo info = CommandInfo.builder()
+                    .name(COMMAND).args(Collections.singletonList(ARGS_UNQUOTED[i])).build();
             List<CommandInfo> expected = Collections.singletonList(info);
             List<CommandInfo> actual = CommandLineParser.parse(text, env);
             for (int j = 0; j < expected.size(); j++) {
@@ -91,8 +93,9 @@ public class CommandLineParserTest {
 
         for (int i = 0; i < ARGS.length; i++) {
             String text = String.format("   %s      %s    %s  %s   %s  ", COMMAND, ARGS[i], ARGS[i], ARGS[i], ARGS[i]);
-            CommandInfo info = new CommandInfo(COMMAND, Arrays.asList(ARGS_UNQUOTED[i], ARGS_UNQUOTED[i],
-                    ARGS_UNQUOTED[i], ARGS_UNQUOTED[i]));
+            CommandInfo info = CommandInfo.builder().name(COMMAND).args(
+                    Arrays.asList(ARGS_UNQUOTED[i], ARGS_UNQUOTED[i], ARGS_UNQUOTED[i], ARGS_UNQUOTED[i])
+            ).build();
             List<CommandInfo> expected = Collections.singletonList(info);
             List<CommandInfo> actual = CommandLineParser.parse(text, env);
             for (int j = 0; j < expected.size(); j++) {

@@ -14,6 +14,8 @@ import java.util.List;
  *     <li> external executable files </li>
  * </ul>
  *
+ * Pattern used: Command
+ *
  * @see AbstractBuiltinExecutable
  * @see External
  * @author antonpp

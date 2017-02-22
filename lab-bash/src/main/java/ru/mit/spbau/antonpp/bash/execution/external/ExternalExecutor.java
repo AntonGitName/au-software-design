@@ -1,9 +1,7 @@
-package ru.mit.spbau.antonpp.bash.execution;
+package ru.mit.spbau.antonpp.bash.execution.external;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import ru.mit.spbau.antonpp.bash.cli.Environment;
-import ru.mit.spbau.antonpp.bash.io.IOStreams;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -12,20 +10,19 @@ import java.util.List;
 /**
  * This class represents all executable files that can be called via command line of the application.
  *
- * @author antonpp
- * @since 01/11/2016
+ * @author Anton Mordberg
+ * @since 17.02.17
  */
 @Slf4j
-public class External implements Executable {
+class ExternalExecutor {
 
     private final Path path;
 
-    public External(Path path) {
+    public ExternalExecutor(Path path) {
         this.path = path;
     }
 
-    @Override
-    public int execute(Environment env, List<String> args, IOStreams io) throws Exception {
+    public int run(List<String> args) throws Exception {
         log.debug("executing external executable: `{} {}`", path, args);
         val params = new ArrayList<String>();
         params.add(path.toString());
